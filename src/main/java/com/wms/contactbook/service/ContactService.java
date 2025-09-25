@@ -21,9 +21,11 @@ public class ContactService {
         return this.contactRepository.findAll();
     }
 
-    public void deleteContactById(BigInteger id) {
+    public Optional<Contact> deleteContactById(BigInteger id) {
         Optional<Contact> contactToDelete = contactRepository.findById(id);
         contactToDelete.ifPresent(contact -> contactRepository.delete(contact));
+
+        return contactToDelete;
     }
 
     public Optional<Contact> getContact(BigInteger id ) {
@@ -38,7 +40,7 @@ public class ContactService {
         return contact;
     }
 
-    public void updateContact(BigInteger id, Contact newContact) {
+    public Optional<Contact> updateContact(BigInteger id, Contact newContact) {
         Optional<Contact> optional = contactRepository.findById(id);
         if(optional.isPresent()) {
             Contact contact = optional.get();
@@ -48,9 +50,10 @@ public class ContactService {
             contact.setPhone(newContact.getPhone());
             contactRepository.save(contact);
         }
+        return optional;
     }
 
-    public void patchContact(Contact newContact, BigInteger id) {
+    public Optional<Contact> patchContact(Contact newContact, BigInteger id) {
         Optional<Contact> optional = contactRepository.findById(id);
         if(optional.isPresent()) {
             Contact contact = optional.get();
@@ -69,5 +72,6 @@ public class ContactService {
             contactRepository.save(contact);
 
         }
+        return optional;
     }
 }

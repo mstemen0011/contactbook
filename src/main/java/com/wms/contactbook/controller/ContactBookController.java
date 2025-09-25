@@ -48,17 +48,20 @@ public class ContactBookController {
     }
 
     @PutMapping("/contacts/{id}")
-    public void updateContact( @PathVariable BigInteger id, @RequestBody Contact newContact ) {
-       contactService.updateContact(id, newContact);
+    public ResponseEntity<Contact> updateContact( @PathVariable BigInteger id, @RequestBody Contact newContact ) {
+       Optional<Contact> contact = contactService.updateContact(id, newContact);
+        return contact.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @DeleteMapping ("/contacts/{id}")
-    public void deleteContact( @PathVariable BigInteger id ) {
-       contactService.deleteContactById(id);
+    public ResponseEntity<Contact> deleteContact( @PathVariable BigInteger id ) {
+       Optional<Contact> contact = contactService.deleteContactById(id);
+        return contact.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
     }
 
     @PatchMapping ("/contacts/{id}")
-    public void updateContact( @RequestBody Contact newContact , @PathVariable BigInteger id ) {
-       contactService.patchContact( newContact, id );
+    public ResponseEntity<Contact> updateContact( @RequestBody Contact newContact , @PathVariable BigInteger id ) {
+       Optional<Contact> contact = contactService.patchContact( newContact, id );
+        return contact.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
     }
 }
