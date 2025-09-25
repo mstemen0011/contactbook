@@ -2,6 +2,8 @@ package com.wms.contactbook.controller;
 
 import com.wms.contactbook.model.Contact;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.wms.contactbook.service.ContactService;
 
@@ -25,12 +27,13 @@ public class ContactBookController {
     }
 
     @GetMapping( "/contacts/{id}")
-    public Contact getContact( @PathVariable BigInteger id ) {
+    public ResponseEntity<Optional<Contact>> getContact(@PathVariable BigInteger id ) {
         Optional<Contact> contact = contactService.getContact(id);
-        if( contact.isPresent()) {
-            return contact.get();
+        if(contact.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Returns 200 OK if the item exists
         }
-        return null;
+        return new ResponseEntity<>(contact, HttpStatus.OK); // Returns 200 OK if the item exists
+
     }
 
     @GetMapping("/contacts")
@@ -39,8 +42,9 @@ public class ContactBookController {
     }
 
     @PostMapping( "/contacts")
-    public void addContact( @RequestBody Contact newContact ) {
-       contactService.saveContact(newContact);
+    public ResponseEntity<Contact> addContact( @RequestBody Contact newContact ) {
+       Contact contact = contactService.saveContact(newContact);
+       return new ResponseEntity<>(contact, HttpStatus.CREATED);
     }
 
     @PutMapping("/contacts/{id}")

@@ -2,7 +2,6 @@ package com.wms.contactbook.service;
 
 import com.wms.contactbook.model.Contact;
 import com.wms.contactbook.repository.ContactRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.math.BigInteger;
 import java.util.List;
@@ -11,19 +10,15 @@ import java.util.Optional;
 @Service
 public class ContactService {
 
-    @Autowired
-    private ContactRepository contactRepository;
+    private final ContactRepository contactRepository;
 
-    public ContactService() {
+    public ContactService(ContactRepository contactRepository) {
 
+        this.contactRepository = contactRepository;
     }
 
     public List<Contact> getContactList() {
         return this.contactRepository.findAll();
-    }
-
-    public void deleteContact(Contact contact) {
-        contactRepository.delete(contact);
     }
 
     public void deleteContactById(BigInteger id) {
@@ -32,14 +27,15 @@ public class ContactService {
     }
 
     public Optional<Contact> getContact(BigInteger id ) {
-        Optional<Contact> optional = Optional.empty();
+        Optional<Contact> optional;
         optional = contactRepository.findById(id);
 
         return optional;
     }
 
-    public void saveContact( Contact contact ) {
+    public Contact saveContact(Contact contact ) {
         contactRepository.save(contact);
+        return contact;
     }
 
     public void updateContact(BigInteger id, Contact newContact) {
