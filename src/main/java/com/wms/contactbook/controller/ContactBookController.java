@@ -14,7 +14,7 @@ import java.util.Optional;
 @RestController
 public class ContactBookController {
 
-    private ContactService contactService;
+    private final ContactService contactService;
 
    @Autowired
     public ContactBookController(ContactService contactService) {

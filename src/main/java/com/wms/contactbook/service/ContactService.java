@@ -23,7 +23,7 @@ public class ContactService {
 
     public Optional<Contact> deleteContactById(BigInteger id) {
         Optional<Contact> contactToDelete = contactRepository.findById(id);
-        contactToDelete.ifPresent(contact -> contactRepository.delete(contact));
+        contactToDelete.ifPresent(contactRepository::delete);
 
         return contactToDelete;
     }
