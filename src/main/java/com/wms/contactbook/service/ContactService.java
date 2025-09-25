@@ -1,49 +1,77 @@
-package service;
+package com.wms.contactbook.service;
 
-import model.Contact;
+import com.wms.contactbook.model.Contact;
+import com.wms.contactbook.repository.ContactRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
+import java.math.BigInteger;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
 public class ContactService {
 
-    private List<Contact> contactList;
+    @Autowired
+    private ContactRepository contactRepository;
 
     public ContactService() {
-        contactList = new ArrayList<>();
-        Contact contactOne = new Contact(1, "Test1", "TestLName1", "Test@test.com", "");
-        Contact contactTwo = new Contact(2, "Test2", "TestLName2", "Test@test.com", "");
-        Contact contactThree = new Contact(3, "Test3", "TestLName3", "Test@test.com", "");
-        Contact contactFour = new Contact(4, "Test4", "TestLName4", "Test@test.com", "");
-        Contact contactFive = new Contact(5, "Test5", "TestLName5", "Test@test.com", "");
-
-        contactList.add(contactOne);
-        contactList.add(contactTwo);
-        contactList.add(contactThree);
-        contactList.add(contactFour);
-        contactList.add(contactFive);
 
     }
 
     public List<Contact> getContactList() {
-        return contactList;
-
-
-
+        return this.contactRepository.findAll();
     }
 
-    public Optional<Contact> getContact(Integer id ) {
+    public void deleteContact(Contact contact) {
+        contactRepository.delete(contact);
+    }
+
+    public void deleteContactById(BigInteger id) {
+        Optional<Contact> contactToDelete = contactRepository.findById(id);
+        contactToDelete.ifPresent(contact -> contactRepository.delete(contact));
+    }
+
+    public Optional<Contact> getContact(BigInteger id ) {
         Optional<Contact> optional = Optional.empty();
-        for( Contact contact : contactList){
-            if(Objects.equals(id, contact.getId())) {
-                optional = Optional.of(contact);
-            }
-        }
+        optional = contactRepository.findById(id);
+
         return optional;
     }
 
+    public void saveContact( Contact contact ) {
+        contactRepository.save(contact);
+    }
+
+    public void updateContact(BigInteger id, Contact newContact) {
+        Optional<Contact> optional = contactRepository.findById(id);
+        if(optional.isPresent()) {
+            Contact contact = optional.get();
+            contact.setFirstName(newContact.getFirstName());
+            contact.setLastName(newContact.getLastName());
+            contact.setEmail(newContact.getEmail());
+            contact.setPhone(newContact.getPhone());
+            contactRepository.save(contact);
+        }
+    }
+
+    public void patchContact(Contact newContact, BigInteger id) {
+        Optional<Contact> optional = contactRepository.findById(id);
+        if(optional.isPresent()) {
+            Contact contact = optional.get();
+            if( newContact.getFirstName() != null && ! newContact.getFirstName().isEmpty() ) {
+                contact.setFirstName(newContact.getFirstName());
+            }
+            if( newContact.getLastName() != null && ! newContact.getLastName().isEmpty() ) {
+                contact.setLastName(newContact.getLastName());
+            }
+            if( newContact.getEmail() != null  && ! newContact.getEmail().isEmpty() ) {
+                contact.setEmail(newContact.getEmail());
+            }
+            if( newContact.getPhone() != null && ! newContact.getPhone().isEmpty()) {
+                contact.setPhone(newContact.getPhone());
+            }
+            contactRepository.save(contact);
+
+        }
+    }
 }
