@@ -23,7 +23,7 @@ public class ContactBookController {
 
     @GetMapping("/")
     public String hello() {
-        return "Hello World";
+        return "Contact Book";
     }
 
     @GetMapping( "/contacts/{id}")
